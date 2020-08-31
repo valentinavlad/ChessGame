@@ -101,11 +101,12 @@ namespace ChessGameTests
             var listOfMoves = new List<string>()
                 {
                     "Pb8Q"
+                     //"Bdb8","0-0","Pb8Q"
                 };
-
+          
             game.Play(listOfMoves);
             var army = game.Board.GetArmy(PieceColor.White);
-            var quuen = army.AlivePieces.First();
+            var quuen = army.AlivePieces.Where(p => p is Queen).Single();
 
             Assert.IsType<Queen>(quuen);
         }

@@ -56,6 +56,10 @@ namespace ChessGame
         private void AddWhitePieces1()
         {
             WhiteArmy.AddPiece(new WhitePawn(GetCell(1, 1), PieceColor.White));
+            WhiteArmy.AddPiece(new Rook(GetCell(7, 7), PieceColor.White));
+            WhiteArmy.AddPiece(new King(GetCell(7, 4), PieceColor.White));
+            WhiteArmy.AddPiece(new Bishop(GetCell(2, 3), PieceColor.White));
+            WhiteArmy.AddPiece(new Bishop(GetCell(1, 0), PieceColor.White));
         }
 
         private void AddWhitePieces()

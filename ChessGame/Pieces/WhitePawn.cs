@@ -27,7 +27,6 @@ namespace ChessGame
                 if (Cell.Row == 6 && targetCell.Piece == null)
                 {
                     validMoves.Add(targetCell);
-
                 }
            
             }

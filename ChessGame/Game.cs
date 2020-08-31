@@ -1,6 +1,7 @@
 ﻿using ChessGame.Pieces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ChessGame
@@ -8,20 +9,18 @@ namespace ChessGame
     public class Game
     {
         private readonly IBoard board;
-        private Player whitePlayer;
-        private Player blackPlayer;
         public Player currentPlayer;
         public Game(bool withPieces = true)
         {
             board = withPieces ? new Board() : new Board(false);
 
-            whitePlayer = new Player(board, PieceColor.White);
-            blackPlayer = new Player(board, PieceColor.Black);
-            currentPlayer = whitePlayer;
+            WhitePlayer = new Player(board, PieceColor.White);
+            BlackPlayer = new Player(board, PieceColor.Black);
+            currentPlayer = WhitePlayer;
         }
 
-        public Player WhitePlayer { get => whitePlayer; }
-        public Player BlackPlayer { get => blackPlayer; }
+        public Player WhitePlayer { get; }
+        public Player BlackPlayer { get; }
 
         public IBoard Board => board;
 
@@ -33,26 +32,43 @@ namespace ChessGame
 
                 NextTurn(currentPlayer, moveAN);
 
-
             }
         }
 
         private void NextTurn(Player player, IMoveAN moveAN)
         {
-            var targetCellFromMoveAN = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
             var allValidMovesOfPieces = player.GenerateAllLegalMoves();
-            foreach (var move in allValidMovesOfPieces)
+            if (moveAN.Coordinate != null) 
             {
-                move.MoveAN = moveAN;
-             
-                if (move.TargetPosition == targetCellFromMoveAN)
+                var targetCellFromMoveAN = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
+                var findAllMovesCanHitTargetPosition = allValidMovesOfPieces.Where(m => m.TargetPosition == targetCellFromMoveAN);
+                IMove findCorrectMove = null;
+                if (moveAN.File != -1)
                 {
-                    player.MakeMove(move);
+                      findCorrectMove = findAllMovesCanHitTargetPosition.Where(p => p.InitialPosition.Column == moveAN.File
+                                                                     && p.InitialPosition.Piece.GetType() == moveAN.PieceType).Single();
+                }
+                else
+                {
+                    findCorrectMove = findAllMovesCanHitTargetPosition.Where(p =>  p.InitialPosition.Piece.GetType() == moveAN.PieceType).Single();
                 }
 
+                if (findCorrectMove == null)
+                {
+                    throw new InvalidOperationException("Invalid move");
+                }
+                findCorrectMove.MoveAN = moveAN;
+                player.MakeMove(findCorrectMove);
+
+
             }
+            if (moveAN.IsKingCastling)
+            {
+
+            }
+         
       
-            currentPlayer = currentPlayer == whitePlayer ? blackPlayer : whitePlayer;
+            currentPlayer = currentPlayer == WhitePlayer ? BlackPlayer : WhitePlayer;
 
         }
     }

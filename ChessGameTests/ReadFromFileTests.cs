@@ -1,4 +1,5 @@
 ﻿using ChessGame;
+using ChessGame.Pieces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -27,6 +28,59 @@ namespace ChessGameTests
          
             Assert.False(move.IsCheckMate);
             Assert.True(move.IsPromotion);
+        }
+        [Fact]
+        public void CheckRegexForKingCastlingShouldReturnNewPiece()
+        {
+            var notation = "0-0";
+    
+            var move = MoveNotationConverter.ParseMoveNotation(notation);
+
+
+            Assert.True(move.IsKingCastling);
+            Assert.False(move.IsQueenCastling);
+        }
+        [Fact]
+        public void CheckRegexForMovePawnToPromotionShouldReturnNewPiece()
+        {
+            var notation = "Pe8Q++";
+            var move = MoveNotationConverter.ParseMoveNotation(notation);
+
+            Assert.NotNull(move.Coordinate);
+            Assert.True(move.IsPromotion);
+
+            Assert.False(move.IsCheck);
+            Assert.True(move.IsCheckMate);
+        }
+
+        [Fact]
+        public void CheckRegexForMoveBishopShouldReturn()
+        {
+            var notation = "Be5+";
+   
+            var move = MoveNotationConverter.ParseMoveNotation(notation);
+
+            Assert.NotNull(move.Coordinate);
+            Assert.False(move.IsPromotion);
+
+            Assert.True(move.IsCheck);
+            Assert.False(move.IsCheckMate);
+        }
+
+        [Fact]
+        public void CheckRegexForMoveBishopWithCaptureShouldReturn()
+        {
+            var notation = "Bxe5";
+         
+            var move = MoveNotationConverter.ParseMoveNotation(notation);
+
+            Assert.NotNull(move.Coordinate);
+            Assert.False(move.IsPromotion);
+
+    
+            Assert.False(move.IsCheck);
+            Assert.False(move.IsCheckMate);
+
         }
 
     }

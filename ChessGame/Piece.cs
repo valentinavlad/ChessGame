@@ -4,10 +4,6 @@ using System.Data;
 
 namespace ChessGame
 {
-    public enum PromoteOptions
-    {
-        Queen = 0, Rook = 1, Bishop = 2, Knight = 3
-    }
     public abstract class Piece
     {
         protected Piece(Cell cell, PieceColor color)

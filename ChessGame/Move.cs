@@ -1,12 +1,13 @@
-﻿using System;
+﻿using ChessGame.Pieces;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ChessGame
 {
     public class Move : IMove
     {
-        IMoveAN moveAN;
         public Move(Cell initialPosition, Cell targetPosition, Piece movingPiece)
         {
             InitialPosition = initialPosition;
@@ -19,7 +20,9 @@ namespace ChessGame
 
         public Piece MovingPiece { get; set; }
 
-        public Cell TargetPosition { get; set; }
-        public IMoveAN MoveAN { get => moveAN; set => moveAN = value; }
+        public Cell TargetPosition { get; set; } 
+        public IMoveAN MoveAN { get; set; }
+        
+        
     }
 }

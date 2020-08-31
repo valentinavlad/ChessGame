@@ -29,14 +29,18 @@ namespace ChessGame
             move.TargetPosition.Piece = pieceWhoMoves;
             move.InitialPosition.Piece = null;
 
-            //aici fac promovarea
             if (pieceWhoMoves is WhitePawn || pieceWhoMoves is BlackPawn)
             {
                 PawnPromotion(move, pieceWhoMoves);
             }
         }
+            //     //Castling to the right
+            //if (to.Piece is King && to.X - from.X == 2)
+            //{
+            //    Move(GetCell(7, to.Y), GetCell(to.X - 1, to.Y), promoteOption); //Move the rook as well
+            //}
 
-        public IEnumerable<Move> GenerateAllLegalMoves()
+    public IEnumerable<Move> GenerateAllLegalMoves()
         {
             var alivePieces = board.GetArmy(color).AlivePieces;
             var legalMoves = new List<Move>();
@@ -54,7 +58,15 @@ namespace ChessGame
 
         private void PawnPromotion(IMove move, Piece pieceWhoMoves)
         {
-            var wp = (WhitePawn)pieceWhoMoves;
+            Piece wp = null;
+            if(pieceWhoMoves.Color == PieceColor.White)
+            {
+                wp = (WhitePawn)pieceWhoMoves;
+            }
+            if (pieceWhoMoves.Color == PieceColor.Black)
+            {
+                wp = (BlackPawn)pieceWhoMoves;
+            }
             if (wp.IsPromoted)
             {
                 IArmy army = board.GetArmy(color);
