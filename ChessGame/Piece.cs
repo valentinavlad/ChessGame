@@ -14,6 +14,7 @@ namespace ChessGame
         }
 
         public bool IsPromoted { get; set; } = false;
+        public bool IsMoved { get; set; } = false;
         public Cell Cell { get; set; }
         public PieceColor Color { get; set; }
 

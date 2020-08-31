@@ -19,7 +19,7 @@ namespace ChessGame.Pieces
             validMoves.AddRange(GenerateLiniarMoves(0, -1));
             return validMoves;
         }
-
+ 
         public override string ToString()
         {
             return Color == PieceColor.White ? "R" : "_R";

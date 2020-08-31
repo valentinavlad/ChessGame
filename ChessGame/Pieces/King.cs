@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 
 namespace ChessGame.Pieces
@@ -21,10 +22,33 @@ namespace ChessGame.Pieces
                     CheckCell(validMoves, targetCell);
                 }
             }
-
+      
             return validMoves;
         }
 
+        public void KingCastling()
+        {
+            if (!IsMoved)
+            {
+                var t = GenerateLiniarMoves2(0, 1);
+                //Cell targetCell =
+            }
+        }
+        protected bool GenerateLiniarMoves2(int row, int column)
+        {           
+            Cell targetCell = Cell.GetAdiacetCell(row, column);
+            var rook = targetCell.Piece as Rook;
+            while (targetCell.Piece == rook)
+            {
+                if (targetCell.Piece != null)
+                {
+                    return false;
+                }
+          
+                targetCell = targetCell.GetAdiacetCell(row, column);
+            }
+            return true;
+        }
         public override string ToString()
         {
             return Color == PieceColor.White ? "K" : "_K";

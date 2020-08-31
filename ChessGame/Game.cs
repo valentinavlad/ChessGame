@@ -41,16 +41,16 @@ namespace ChessGame
             if (moveAN.Coordinate != null) 
             {
                 var targetCellFromMoveAN = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
-                var findAllMovesCanHitTargetPosition = allValidMovesOfPieces.Where(m => m.TargetPosition == targetCellFromMoveAN);
+                var findAllMovesCanHitTargetPosition = allValidMovesOfPieces.Where(m => m.TargetPosition == targetCellFromMoveAN
+                                && m.InitialPosition.Piece.GetType() == moveAN.PieceType);
                 IMove findCorrectMove = null;
                 if (moveAN.File != -1)
                 {
-                      findCorrectMove = findAllMovesCanHitTargetPosition.Where(p => p.InitialPosition.Column == moveAN.File
-                                                                     && p.InitialPosition.Piece.GetType() == moveAN.PieceType).Single();
+                    findCorrectMove = findAllMovesCanHitTargetPosition.Where(p => p.InitialPosition.Column == moveAN.File).Single();
                 }
                 else
                 {
-                    findCorrectMove = findAllMovesCanHitTargetPosition.Where(p =>  p.InitialPosition.Piece.GetType() == moveAN.PieceType).Single();
+                    findCorrectMove = findAllMovesCanHitTargetPosition.Single();
                 }
 
                 if (findCorrectMove == null)
@@ -59,12 +59,12 @@ namespace ChessGame
                 }
                 findCorrectMove.MoveAN = moveAN;
                 player.MakeMove(findCorrectMove);
-
-
             }
-            if (moveAN.IsKingCastling)
+            if (moveAN.IsKingCastling || moveAN.IsQueenCastling)
             {
-
+                var isKingSide = moveAN.IsKingCastling ? true : false;
+                var color = player == WhitePlayer ? PieceColor.White : PieceColor.Black;
+                board.Castling(color, isKingSide);
             }
          
       

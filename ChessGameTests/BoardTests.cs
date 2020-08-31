@@ -62,7 +62,7 @@ namespace ChessGameTests
         public void CoordonateXOutOfBoundShouldReturnNull()
         {
             var board = new Board();
-
+    
             Assert.Null(board.GetCell(8, 0));
         }
 
@@ -100,8 +100,8 @@ namespace ChessGameTests
 
             var listOfMoves = new List<string>()
                 {
-                    "Pb8Q"
-                     //"Bdb8","0-0","Pb8Q"
+                    "0-0-0"
+                    // "Bdb8","0-0","Pb8Q"
                 };
           
             game.Play(listOfMoves);

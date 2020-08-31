@@ -1,6 +1,7 @@
 ﻿using ChessGame.Pieces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ChessGame
@@ -41,7 +42,69 @@ namespace ChessGame
                 : null;
         }
 
-      
+        public void Castling(PieceColor color, bool isKingSide = true)
+        {
+            int column = isKingSide ? 7 : 0;
+            var king = GetArmy(color).AlivePieces.Where(p => p is King).SingleOrDefault();
+
+            var rook = GetArmy(color).AlivePieces.Where(p => p is Rook)
+                                    .Where(p => p.Cell.Column == column).SingleOrDefault();
+
+            if (rook == null) throw new InvalidOperationException("Invalid move!");
+            if(isKingSide && CheckPathToRight(king.Cell, rook.Cell))
+            {
+                MakeRightCastling(king.Cell, rook.Cell);
+            }
+
+            if (CheckPathToLeft(king.Cell, rook.Cell))
+            {
+                MakeLeftCastling(king.Cell, rook.Cell);
+            }
+        }
+
+        private void MakeLeftCastling(Cell king, Cell rook)
+        {
+            var kingPlace = GetCell(king.Row, king.Column - 2);
+            MovePiece(king, kingPlace);
+
+            var rookPlace = GetCell(rook.Row, rook.Column + 3);
+            MovePiece(rook, rookPlace);
+        }
+
+        private void MakeRightCastling(Cell king, Cell rook)
+        {
+            var kingPlace = GetCell(king.Row, king.Column + 2);
+            MovePiece(king, kingPlace);
+
+            var rookPlace = GetCell(rook.Row, rook.Column - 2);
+            MovePiece(rook, rookPlace);
+        }
+        
+        private void MovePiece(Cell from, Cell to)
+        {
+            to.Piece = from.Piece;
+            from.Piece = null;
+        }
+
+        private bool CheckPathToRight(Cell from, Cell to)
+        {
+            var getCell = GetCell(from.Row, from.Column + 1);
+            for (Cell y = getCell; y.Column < to.Column; y.Column++)
+            {
+                if (y.Piece != null) return false;
+            }
+            return true;
+        }
+        private bool CheckPathToLeft(Cell from, Cell to)
+        {
+            var getCell = GetCell(from.Row, from.Column - 1);
+            for (Cell y = getCell; y.Column > to.Column; y.Column--)
+            {
+                if (y.Piece != null) return false;
+            }
+            return true;
+        }
+
         private void InitializeBoard()
         {
             for (int i = 0; i < LENGTH; i++)
@@ -60,6 +123,7 @@ namespace ChessGame
             WhiteArmy.AddPiece(new King(GetCell(7, 4), PieceColor.White));
             WhiteArmy.AddPiece(new Bishop(GetCell(2, 3), PieceColor.White));
             WhiteArmy.AddPiece(new Bishop(GetCell(1, 0), PieceColor.White));
+            WhiteArmy.AddPiece(new Rook(GetCell(7, 0), PieceColor.White));
         }
 
         private void AddWhitePieces()
@@ -95,35 +159,6 @@ namespace ChessGame
             BlackArmy.AddPiece(new King(GetCell(0, 4), PieceColor.Black));
 
         }
-        public Piece CreatePiece(char pieceUppercase, PieceColor pieceColor, Cell targetCell)
-        {
-            string piecesNameInitials = "RBQN";
-            var charExists = piecesNameInitials.Contains(pieceUppercase);
-            if (!charExists)
-            {
-                throw new InvalidOperationException("Invalid promotion!");
-            }
-
-            if (pieceUppercase == 'R')
-            {
-                return new Rook(targetCell, pieceColor);
-            }
-            if (pieceUppercase == 'Q')
-            {
-                return new Queen(targetCell, pieceColor);
-            }
-            if (pieceUppercase == 'B')
-            {
-                return new Bishop(targetCell, pieceColor);
-            }
-            if (pieceUppercase == 'N')
-            {
-                return new Knight(targetCell, pieceColor);
-            }
-
-            return null;
-        }
-
-
+   
     }
 }

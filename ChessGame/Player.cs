@@ -16,31 +16,30 @@ namespace ChessGame
             this.color = color;
         }
 
+
+
         public void MakeMove(IMove move)
-        {    
-            if(move.TargetPosition.Piece != null)
+        {
+
+            if (move.TargetPosition.Piece != null)
             {
                 IArmy army = board.GetArmy(GetOpponent());
                 army.CapturedPiece(move.TargetPosition.Piece);
             }
             Piece pieceWhoMoves = move.InitialPosition.Piece;
-           
+  
             pieceWhoMoves.Cell = move.TargetPosition;
             move.TargetPosition.Piece = pieceWhoMoves;
             move.InitialPosition.Piece = null;
-
+            pieceWhoMoves.IsMoved = true;
             if (pieceWhoMoves is WhitePawn || pieceWhoMoves is BlackPawn)
             {
                 PawnPromotion(move, pieceWhoMoves);
             }
+      
+            
         }
-            //     //Castling to the right
-            //if (to.Piece is King && to.X - from.X == 2)
-            //{
-            //    Move(GetCell(7, to.Y), GetCell(to.X - 1, to.Y), promoteOption); //Move the rook as well
-            //}
-
-    public IEnumerable<Move> GenerateAllLegalMoves()
+        public IEnumerable<Move> GenerateAllLegalMoves()
         {
             var alivePieces = board.GetArmy(color).AlivePieces;
             var legalMoves = new List<Move>();
@@ -71,7 +70,7 @@ namespace ChessGame
             {
                 IArmy army = board.GetArmy(color);
                 army.CapturedPiece(wp);
-                var piece = board.CreatePiece(move.MoveAN.PromovatedTo, color, move.TargetPosition);
+                var piece = move.CreatePiece(move.MoveAN.PromovatedTo, color, move.TargetPosition);
                 army.AlivePieces.Add(piece);
             }
         }
