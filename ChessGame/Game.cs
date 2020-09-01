@@ -9,11 +9,12 @@ namespace ChessGame
     public class Game
     {
         private readonly IBoard board;
-        public Player currentPlayer;
+        private Player currentPlayer;
+
         public Game()
         {
             board = new Board();
-
+         
             WhitePlayer = new Player(board, PieceColor.White);
             BlackPlayer = new Player(board, PieceColor.Black);
             currentPlayer = WhitePlayer;
@@ -26,10 +27,10 @@ namespace ChessGame
 
         public void Play(List<string> listOfMoves)
         {
-            ListMoveExceptions(listOfMoves);
+            HandleExceptions.ListMoveExceptions(listOfMoves);
             foreach (var m in listOfMoves)
             {
-                MoveExceptions(m);
+                HandleExceptions.MoveExceptions(m);
                 var moveAN = MoveNotationConverter.ParseMoveNotation(m);
                 NextTurn(currentPlayer, moveAN);
 
@@ -39,23 +40,9 @@ namespace ChessGame
         private void NextTurn(Player player, IMoveAN moveAN)
         {
             var validMoves = player.GenerateAllLegalMoves();
-            if (moveAN.Coordinate != null) 
+            if (moveAN.Coordinate != null)
             {
-                var targetCell = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
-       
-                var movesHitTargetCell = validMoves.Where(m => m.TargetPosition == targetCell
-                                && m.InitialPosition.Piece.GetType() == moveAN.PieceType);
-    
-                ListMoveExceptions<Move>(movesHitTargetCell);
-
-                IMove findCorrectMove = moveAN.File != -1
-                    ? movesHitTargetCell.Where(p => p.InitialPosition.Column == moveAN.File).Single()
-                    : movesHitTargetCell.Single();
-                //must move this in Play??
-                if (findCorrectMove == null)
-                {
-                    throw new InvalidOperationException("Invalid move");
-                }
+                IMove findCorrectMove = GetMove(moveAN, validMoves);
                 findCorrectMove.MoveAN = moveAN;
                 player.MakeMove(findCorrectMove);
             }
@@ -69,20 +56,21 @@ namespace ChessGame
             currentPlayer = currentPlayer == WhitePlayer ? BlackPlayer : WhitePlayer;
         }
 
-        private void MoveExceptions(string move)
+        private IMove GetMove(IMoveAN moveAN, IEnumerable<Move> validMoves)
         {
-            if (string.IsNullOrEmpty(move))
-            {
-                throw new InvalidOperationException("There is no move");
-            }
+            var targetCell = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
+
+            var movesHitTargetCell = validMoves.Where(m => m.TargetPosition == targetCell && m.InitialPosition.Piece.GetType() == moveAN.PieceType);
+
+            HandleExceptions.ListMoveExceptions<Move>(movesHitTargetCell);
+
+            IMove findCorrectMove = moveAN.File != -1
+                ? movesHitTargetCell.Where(p => p.InitialPosition.Column == moveAN.File).Single()
+                : movesHitTargetCell.Single();
+
+            HandleExceptions.MoveException(findCorrectMove);
+            return findCorrectMove;
         }
 
-        private void ListMoveExceptions<T>(IEnumerable<T> moves)
-        {
-            if (moves == null || moves.Count() == 0 || !moves.Any())
-            {
-                throw new InvalidOperationException("There are no legal moves in the list");
-            }
-        }
     }
 }

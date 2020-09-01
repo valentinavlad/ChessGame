@@ -9,7 +9,9 @@ namespace ChessGame
     {
         private readonly IBoard board;
         private readonly PieceColor color;
-       
+
+        public PieceColor Color => color;
+
         public Player(IBoard board, PieceColor color)
         {
             this.board = board;

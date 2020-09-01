@@ -13,7 +13,6 @@ namespace ChessGame
             InitialPosition = initialPosition;
             TargetPosition = targetPosition;
             MovingPiece = movingPiece;
-
         }
 
         public Cell InitialPosition { get; set; }
@@ -27,10 +26,7 @@ namespace ChessGame
         {
             string piecesNameInitials = "RBQN";
             var charExists = piecesNameInitials.Contains(pieceUppercase);
-            if (!charExists)
-            {
-                throw new InvalidOperationException("Invalid promotion!");
-            }
+            InvalidPromotion(charExists);
 
             if (pieceUppercase == 'R')
             {
@@ -50,6 +46,14 @@ namespace ChessGame
             }
 
             return null;
+        }
+
+        private void InvalidPromotion(bool charExists)
+        {
+            if (!charExists)
+            {
+                throw new InvalidOperationException("Invalid promotion!");
+            }
         }
     }
 }

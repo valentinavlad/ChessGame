@@ -8,20 +8,18 @@ namespace ChessGame
 {
     public class MoveAN : IMoveAN
     {
-        public MoveAN()
-        {
-
-        }
         public Coordinate Coordinate { get; set; }
+        public Type PieceType { get; set; }
+        public int File { get; set; } = -1;
         public bool IsCheck { get; set; }
         public bool IsCheckMate { get; set; }
         public bool IsPromotion { get; set; }
-        public int File { get; set; } = -1;
+
 
         public char PromovatedTo { get; set; }
         public bool IsKingCastling { get; set; }
         public bool IsQueenCastling { get; set; }
-        public Type PieceType { get; set; }
+
 
         public void GetPieceType(string moveAN)
         {

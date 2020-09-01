@@ -2,7 +2,7 @@
 
 namespace ChessGame
 {
-    public interface IMoveAN :IMoveANCastling
+    public interface IMoveAN : IMoveANCastling
     {
         Coordinate Coordinate { get; set; }
         int File { get; set; }

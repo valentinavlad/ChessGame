@@ -15,6 +15,7 @@ namespace ChessGame
             var isSpecialPiece = "BRKNQ".Contains(moveNotation.First());
 
             IMoveAN move = new MoveAN();
+            
             if (moveNotation.StartsWith("0"))
             {
                 InterpretRegexCastling(moveNotation, pattern, move);
@@ -71,7 +72,6 @@ namespace ChessGame
                 {
                     move.IsQueenCastling = true;
                 }
-                
             }
         }
     }
