@@ -25,8 +25,6 @@ namespace ChessGameTests
 
             player.MakeMove(move);
 
-            
-
             //move king
             var initialPositionKing = board.GetCell(7, 4);
             var targetPositionKing = board.GetCell(6, 4);

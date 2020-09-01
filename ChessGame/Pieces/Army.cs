@@ -7,36 +7,25 @@ namespace ChessGame.Pieces
 {
     public class Army : IArmy
     {
-        private IList<Piece> alivePieces;
-        private IList<Piece> deadPieces;
-
         public Army()
         {
-            alivePieces = new List<Piece>();
-            deadPieces = new List<Piece>();
+            AlivePieces = new List<Piece>();
+            DeadPieces = new List<Piece>();
         }
 
-        public IList<Piece> AlivePieces
-        {
-            get => alivePieces;
-            set => alivePieces = value;
-        }
+        public IList<Piece> AlivePieces { get; set; }
 
-        public IList<Piece> DeadPieces
-        {
-            get => deadPieces;
-            set => deadPieces = value;
-        }
+        public IList<Piece> DeadPieces { get; set; }
 
         public void AddPiece(Piece piece)
         {
-            alivePieces.Add(piece);
+            AlivePieces.Add(piece);
         }
-
+ 
         public void CapturedPiece(Piece piece)
         {
-            alivePieces.Remove(piece);
-            deadPieces.Add(piece);
+            AlivePieces.Remove(piece);
+            DeadPieces.Add(piece);
         }
     }
 }

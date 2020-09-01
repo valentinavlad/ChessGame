@@ -7,8 +7,8 @@ namespace ChessGame
 {
     public class Player
     {
-        private IBoard board;
-        private PieceColor color;
+        private readonly IBoard board;
+        private readonly PieceColor color;
        
         public Player(IBoard board, PieceColor color)
         {
@@ -16,11 +16,8 @@ namespace ChessGame
             this.color = color;
         }
 
-
-
         public void MakeMove(IMove move)
         {
-
             if (move.TargetPosition.Piece != null)
             {
                 IArmy army = board.GetArmy(GetOpponent());
@@ -35,10 +32,9 @@ namespace ChessGame
             if (pieceWhoMoves is WhitePawn || pieceWhoMoves is BlackPawn)
             {
                 PawnPromotion(move, pieceWhoMoves);
-            }
-      
-            
+            }      
         }
+
         public IEnumerable<Move> GenerateAllLegalMoves()
         {
             var alivePieces = board.GetArmy(color).AlivePieces;
@@ -58,14 +54,7 @@ namespace ChessGame
         private void PawnPromotion(IMove move, Piece pieceWhoMoves)
         {
             Piece wp = null;
-            if(pieceWhoMoves.Color == PieceColor.White)
-            {
-                wp = (WhitePawn)pieceWhoMoves;
-            }
-            if (pieceWhoMoves.Color == PieceColor.Black)
-            {
-                wp = (BlackPawn)pieceWhoMoves;
-            }
+            wp = GetPawnByColor(pieceWhoMoves, wp);
             if (wp.IsPromoted)
             {
                 IArmy army = board.GetArmy(color);
@@ -74,6 +63,20 @@ namespace ChessGame
                 army.AlivePieces.Add(piece);
             }
         }
+
+        private Piece GetPawnByColor(Piece pieceWhoMoves, Piece pawn)
+        {
+            if (pieceWhoMoves.Color == PieceColor.White)
+            {
+                pawn = (WhitePawn)pieceWhoMoves;
+            }
+            if (pieceWhoMoves.Color == PieceColor.Black)
+            {
+                pawn = (BlackPawn)pieceWhoMoves;
+            }
+            return pawn;
+        }
+
         private PieceColor GetOpponent()
         {
             return color == PieceColor.White ? PieceColor.Black : PieceColor.White;

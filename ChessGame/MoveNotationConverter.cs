@@ -11,37 +11,25 @@ namespace ChessGame
         public static IMoveAN ParseMoveNotation(string moveNotation)
         {
             var firstChar = moveNotation.First();
-            string pattern;
+            string pattern = "";
+            var isSpecialPiece = "BRKNQ".Contains(moveNotation.First());
 
             IMoveAN move = new MoveAN();
-  
             if (moveNotation.StartsWith("0"))
             {
-                pattern = @"^(?<castling>[0]([-][0]){1,2})$";
-                Match match = Regex.Match(moveNotation, pattern);
-                if (match.Success)
-                {
-                    if (match.Groups["castling"].Value == "0-0")
-                    {
-                        move.IsKingCastling = true;
-                    }
-                    if (match.Groups["castling"].Value == "0-0-0")
-                    {
-                        move.IsQueenCastling = true;
-                    }
-                }
+                InterpretRegexCastling(moveNotation, pattern, move);
             }
-            else if (moveNotation.Any(c => char.IsUpper(c)))
+            else
             {
-                pattern = char.IsUpper(firstChar) && firstChar != 'P'
-                    ? @"^(?<pieceUppercase>[BRQKN])(?<file>[a-h]{0,1})(?<capture>[x]{0,1})(?<coordinates>[a-h][1-8])(?<checkOrCheckMate>[+]{0,2})$"
-                    : @"^(?<pieceUppercase>[Pp])(?<file>[a-h]{0,1})(?<capture>[x]{0,1})(?<coordinates>[a-h][1-8])(?<promotion>[BRQKN]{0,1})(?<checkOrCheckMate>[+]{0,2})$";
+                pattern = isSpecialPiece
+               ? @"^(?<pieceUppercase>[BRQKN])(?<file>[a-h]{0,1})(?<capture>[x]{0,1})(?<coordinates>[a-h][1-8])(?<checkOrCheckMate>[+]{0,2})$"
+               : @"^(?<pieceUppercase>[Pp])(?<file>[a-h]{0,1})(?<capture>[x]{0,1})(?<coordinates>[a-h][1-8])(?<promotion>[BRQKN]{0,1})(?<checkOrCheckMate>[+]{0,2})$";
                 Match match = Regex.Match(moveNotation, pattern);
                 if (match.Success)
                 {
                     move.Coordinate = MoveNotationCoordinatesConverter.ConvertChessCoordinatesToArrayIndexes(match.Groups["coordinates"].Value);
                     string checkOrCheckMate = match.Groups["checkOrCheckMate"].Value;
-                  
+
                     move.GetPieceType(match.Groups["pieceUppercase"].Value);
                     string file = match.Groups["file"].Value;
                     if (file != "")
@@ -59,15 +47,32 @@ namespace ChessGame
                         move.IsCheckMate = checkOrCheckMate.Length == 2 ? true : false;
                     }
                 }
-
+                else
+                {
+                    throw new InvalidOperationException("This move doesn't respect Algebraic Notation Convention. It can't be interpreted");
+                }
             }
-            else
-            {
-                throw new InvalidOperationException("Invalid move!");
-            }
+          
 
             return move;
         }
 
+        private static void InterpretRegexCastling(string moveNotation, string pattern, IMoveAN move)
+        {
+            pattern = @"^(?<castling>[0]([-][0]){1,2})$";
+            Match match = Regex.Match(moveNotation, pattern);
+            if (match.Success)
+            {
+                if (match.Groups["castling"].Value == "0-0")
+                {
+                    move.IsKingCastling = true;
+                }
+                if (match.Groups["castling"].Value == "0-0-0")
+                {
+                    move.IsQueenCastling = true;
+                }
+                
+            }
+        }
     }
 }

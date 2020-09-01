@@ -9,22 +9,12 @@ namespace ChessGame
     public class Board : IBoard
     {
         private readonly int LENGTH = 8;
-        private Cell[,] cells;
+        private readonly Cell[,] cells;
 
-        public Board(bool withPieces = true)
+        public Board()
         {
             cells = new Cell[LENGTH, LENGTH];
             InitializeBoard();
-            if (withPieces)
-            {
-                AddWhitePieces();
-                AddBlackPieces();
-            }
-            else
-            {
-                AddWhitePieces1();
-            }
-         
         }
  
         public IArmy BlackArmy { get; set; } = new Army();
@@ -51,12 +41,13 @@ namespace ChessGame
                                     .Where(p => p.Cell.Column == column).SingleOrDefault();
 
             if (rook == null) throw new InvalidOperationException("Invalid move!");
+
             if(isKingSide && CheckPathToRight(king.Cell, rook.Cell))
             {
                 MakeRightCastling(king.Cell, rook.Cell);
             }
 
-            if (CheckPathToLeft(king.Cell, rook.Cell))
+            if (!isKingSide && CheckPathToLeft(king.Cell, rook.Cell))
             {
                 MakeLeftCastling(king.Cell, rook.Cell);
             }
@@ -79,7 +70,7 @@ namespace ChessGame
             var rookPlace = GetCell(rook.Row, rook.Column - 2);
             MovePiece(rook, rookPlace);
         }
-        
+
         private void MovePiece(Cell from, Cell to)
         {
             to.Piece = from.Piece;
@@ -106,7 +97,7 @@ namespace ChessGame
         }
 
         private void InitializeBoard()
-        {
+        {           
             for (int i = 0; i < LENGTH; i++)
             {
                 for (int j = 0; j < LENGTH; j++)
@@ -114,16 +105,8 @@ namespace ChessGame
                     cells[i, j] = new Cell(this, i, j);
                 }
             }
-     
-        }
-        private void AddWhitePieces1()
-        {
-            WhiteArmy.AddPiece(new WhitePawn(GetCell(1, 1), PieceColor.White));
-            WhiteArmy.AddPiece(new Rook(GetCell(7, 7), PieceColor.White));
-            WhiteArmy.AddPiece(new King(GetCell(7, 4), PieceColor.White));
-            WhiteArmy.AddPiece(new Bishop(GetCell(2, 3), PieceColor.White));
-            WhiteArmy.AddPiece(new Bishop(GetCell(1, 0), PieceColor.White));
-            WhiteArmy.AddPiece(new Rook(GetCell(7, 0), PieceColor.White));
+            AddWhitePieces();
+            AddBlackPieces();
         }
 
         private void AddWhitePieces()
@@ -157,7 +140,6 @@ namespace ChessGame
             BlackArmy.AddPiece(new Bishop(GetCell(0, 5), PieceColor.Black));
             BlackArmy.AddPiece(new Queen(GetCell(0, 3), PieceColor.Black));
             BlackArmy.AddPiece(new King(GetCell(0, 4), PieceColor.Black));
-
         }
    
     }

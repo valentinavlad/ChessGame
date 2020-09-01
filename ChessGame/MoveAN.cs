@@ -8,6 +8,10 @@ namespace ChessGame
 {
     public class MoveAN : IMoveAN
     {
+        public MoveAN()
+        {
+
+        }
         public Coordinate Coordinate { get; set; }
         public bool IsCheck { get; set; }
         public bool IsCheckMate { get; set; }

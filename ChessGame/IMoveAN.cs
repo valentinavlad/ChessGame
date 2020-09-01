@@ -2,12 +2,10 @@
 
 namespace ChessGame
 {
-    public interface IMoveAN
+    public interface IMoveAN :IMoveANCastling
     {
         Coordinate Coordinate { get; set; }
         int File { get; set; }
-        bool IsKingCastling { get; set; }
-        bool IsQueenCastling { get; set; }
         bool IsCheck { get; set; }
         bool IsCheckMate { get; set; }
         bool IsPromotion { get; set; }

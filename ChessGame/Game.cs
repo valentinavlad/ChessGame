@@ -10,9 +10,9 @@ namespace ChessGame
     {
         private readonly IBoard board;
         public Player currentPlayer;
-        public Game(bool withPieces = true)
+        public Game()
         {
-            board = withPieces ? new Board() : new Board(false);
+            board = new Board();
 
             WhitePlayer = new Player(board, PieceColor.White);
             BlackPlayer = new Player(board, PieceColor.Black);
@@ -26,10 +26,11 @@ namespace ChessGame
 
         public void Play(List<string> listOfMoves)
         {
+            ListMoveExceptions(listOfMoves);
             foreach (var m in listOfMoves)
             {
+                MoveExceptions(m);
                 var moveAN = MoveNotationConverter.ParseMoveNotation(m);
-
                 NextTurn(currentPlayer, moveAN);
 
             }
@@ -37,22 +38,20 @@ namespace ChessGame
 
         private void NextTurn(Player player, IMoveAN moveAN)
         {
-            var allValidMovesOfPieces = player.GenerateAllLegalMoves();
+            var validMoves = player.GenerateAllLegalMoves();
             if (moveAN.Coordinate != null) 
             {
-                var targetCellFromMoveAN = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
-                var findAllMovesCanHitTargetPosition = allValidMovesOfPieces.Where(m => m.TargetPosition == targetCellFromMoveAN
+                var targetCell = board.GetCell(moveAN.Coordinate.Row, moveAN.Coordinate.Column);
+       
+                var movesHitTargetCell = validMoves.Where(m => m.TargetPosition == targetCell
                                 && m.InitialPosition.Piece.GetType() == moveAN.PieceType);
-                IMove findCorrectMove = null;
-                if (moveAN.File != -1)
-                {
-                    findCorrectMove = findAllMovesCanHitTargetPosition.Where(p => p.InitialPosition.Column == moveAN.File).Single();
-                }
-                else
-                {
-                    findCorrectMove = findAllMovesCanHitTargetPosition.Single();
-                }
+    
+                ListMoveExceptions<Move>(movesHitTargetCell);
 
+                IMove findCorrectMove = moveAN.File != -1
+                    ? movesHitTargetCell.Where(p => p.InitialPosition.Column == moveAN.File).Single()
+                    : movesHitTargetCell.Single();
+                //must move this in Play??
                 if (findCorrectMove == null)
                 {
                     throw new InvalidOperationException("Invalid move");
@@ -66,10 +65,24 @@ namespace ChessGame
                 var color = player == WhitePlayer ? PieceColor.White : PieceColor.Black;
                 board.Castling(color, isKingSide);
             }
-         
-      
+           
             currentPlayer = currentPlayer == WhitePlayer ? BlackPlayer : WhitePlayer;
+        }
 
+        private void MoveExceptions(string move)
+        {
+            if (string.IsNullOrEmpty(move))
+            {
+                throw new InvalidOperationException("There is no move");
+            }
+        }
+
+        private void ListMoveExceptions<T>(IEnumerable<T> moves)
+        {
+            if (moves == null || moves.Count() == 0 || !moves.Any())
+            {
+                throw new InvalidOperationException("There are no legal moves in the list");
+            }
         }
     }
 }

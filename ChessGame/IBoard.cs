@@ -6,7 +6,6 @@ namespace ChessGame
     {
         IArmy GetArmy(PieceColor color);
         Cell GetCell(int row, int column);
-       
         void Castling(PieceColor color, bool isKingSide);
     }
 }
